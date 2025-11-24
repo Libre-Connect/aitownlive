@@ -118,13 +118,18 @@ from blivedm import models, handlers
 
 ROOM_ID = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get('ROOM_ID', '0'))
 SERVER = os.environ.get('AI_TOWN_SERVER', 'http://localhost:3000')
-PATH = '/ai-town/presence_import'
+PATH = os.environ.get('AI_TOWN_PATH', '/presence_import')
 
 BATCH = set()
 LAST_POST = 0
 
 class H(handlers.BaseHandler):
     async def on_interact_word(self, msg: models.InteractWordMessage):
+        uname = msg.uname.strip()
+        if uname:
+            BATCH.add(uname)
+
+    async def on_danmaku(self, msg: models.DanmakuMessage):
         uname = msg.uname.strip()
         if uname:
             BATCH.add(uname)
